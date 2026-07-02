@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 240" fill="none">
+  <!-- Small dot (upper right) -->
+  <circle cx="118" cy="24" r="16" fill="#41C0D8"/>
+  <!-- Top ring (donut) - center 62,82 outer-r=52 inner-r=26 -->
+  <path fill="#41C0D8" fill-rule="evenodd"
+    d="M 10,82 a 52,52 0 1,0 104,0 a 52,52 0 1,0 -104,0
+       M 36,82 a 26,26 0 1,0 52,0 a 26,26 0 1,0 -52,0"/>
+  <!-- Bottom ring (donut) - center 72,172 outer-r=62 inner-r=31 -->
+  <path fill="#41C0D8" fill-rule="evenodd"
+    d="M 10,172 a 62,62 0 1,0 124,0 a 62,62 0 1,0 -124,0
+       M 41,172 a 31,31 0 1,0 62,0 a 31,31 0 1,0 -62,0"/>
+</svg>

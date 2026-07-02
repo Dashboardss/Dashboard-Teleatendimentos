@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 140" fill="none">
+  <!-- Icon (Teal) -->
+  <g transform="translate(10, 15)">
+    <!-- Top right dot -->
+    <circle cx="85" cy="18" r="14" fill="#38b6c8"/>
+    <!-- Top Donut -->
+    <path fill="#38b6c8" fill-rule="evenodd" d="M 0,55 a 36,36 0 1,0 72,0 a 36,36 0 1,0 -72,0 M 20,55 a 16,16 0 1,0 32,0 a 16,16 0 1,0 -32,0"/>
+    <!-- Bottom Donut -->
+    <path fill="#38b6c8" fill-rule="evenodd" d="M 0,122 a 36,36 0 1,0 72,0 a 36,36 0 1,0 -72,0 M 20,122 a 16,16 0 1,0 32,0 a 16,16 0 1,0 -32,0"/>
+  </g>
+  
+  <!-- "galileu" text (Dark Blue) -->
+  <text x="105" y="80" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="76" letter-spacing="-2" fill="#1c3a6b">galileu</text>
+  
+  <!-- "SAÚDE 360" text (Dark Blue) -->
+  <text x="110" y="118" font-family="system-ui, -apple-system, sans-serif" font-weight="500" font-size="28" letter-spacing="5" fill="#1c3a6b">SAÚDE 360</text>
+  
+  <!-- Small dot after 360 -->
+  <circle cx="430" cy="110" r="8" fill="#38b6c8"/>
+  <circle cx="430" cy="110" r="3" fill="#ffffff"/>
+</svg>
