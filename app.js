@@ -412,7 +412,6 @@ const ProfessionalsPage = {
       <div class="prof-detail-body">
         <div class="prof-detail-meta">
           <h2 class="prof-detail-name">${prof.name}</h2>
-          <p class="prof-detail-role">${prof.role} · ${prof.specialty}</p>
           <span class="prof-rate-badge" style="background:${prof.colorLight};color:${prof.color}">${r}% taxa de realização</span>
         </div>
         <div class="prof-kpi-row">
@@ -864,7 +863,7 @@ const SettingsPage = {
                   <div class="prof-mini-avatar" style="background:${prof.color}">${prof.initials}</div>
                   <div class="settings-row-info">
                     <span class="settings-row-name">${prof.name}</span>
-                    <span class="settings-row-desc">${prof.role} · ${fmtN(prof.realizados)} realizados</span>
+                    <span class="settings-row-desc">${fmtN(prof.realizados)} realizados</span>
                   </div>
                 </div>
                 <label class="toggle-switch">

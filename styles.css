@@ -230,15 +230,7 @@ body.dark-mode .theme-toggle-btn .moon-icon { opacity: 1; transform: rotate(0); 
 body:not(.dark-mode) .theme-toggle-btn .sun-icon { opacity: 1; transform: rotate(0); }
 body:not(.dark-mode) .theme-toggle-btn .moon-icon { opacity: 0; transform: rotate(90deg); pointer-events: none; }
 
-.avatar {
-  width: 36px; height: 36px;
-  background: linear-gradient(135deg, #7c3aed, #2563eb);
-  border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  color: #fff; font-size: .72rem; font-weight: 800;
-  cursor: pointer; transition: transform var(--transition);
-  flex-shrink: 0;
-}
-.avatar:hover { transform: scale(1.08); }
+
 
 /* ================================================
    PAGE CONTENT AREA
@@ -748,3 +740,5 @@ body:not(.dark-mode) .theme-toggle-btn .moon-icon { opacity: 0; transform: rotat
   .reports-summary-row { grid-template-columns: repeat(2, 1fr); }
   .filter-bar  { gap: 12px; }
 }
+
+
