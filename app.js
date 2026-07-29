@@ -26,11 +26,11 @@ Chart.defaults.plugins.tooltip.cornerRadius = 8;
 Chart.defaults.plugins.tooltip.displayColors = true;
 
 const C = {
-  green:      '#22c55e',
-  greenDark:  '#16a34a',
+  green:      '#38b6c8',
+  greenDark:  '#1c3a6b',
   red:        '#ef4444',
   redDark:    '#dc2626',
-  blue:       '#3b82f6',
+  blue:       '#38b6c8',
   purple:     '#8b5cf6',
   grid:       'rgba(226,232,240,.8)',
   gridDark:   'rgba(48,54,61,.8)',
@@ -160,8 +160,8 @@ function mkLineChart(id, labels, rates, opts = {}) {
   if (!el) return;
   const ctx = el.getContext('2d');
   const g   = ctx.createLinearGradient(0,0,0,200);
-  g.addColorStop(0,'rgba(34,197,94,.28)');
-  g.addColorStop(1,'rgba(34,197,94,0)');
+  g.addColorStop(0,'rgba(28,58,107,.28)');
+  g.addColorStop(1,'rgba(28,58,107,0)');
   const c = new Chart(el, {
     type: 'line',
     data: {
