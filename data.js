@@ -1,35 +1,33 @@
 // ================================================
-// DATA – Panorama de Atendimentos 2025–2026
-// Atualizado em: 2026-10-05 (fonte: ESCALA TELEAUTÔNOMO 2026.xlsx)
-// Contagem real de status "Atendido" / "Não Realizado" para todos os profissionais
+// DATA - Panorama de Atendimentos
+// Atualizado em: 2026-10-05 16:43  (fonte: ESCALA TELEAUTÔNOMO 2026  (1).xlsx)
+// Contagem real de status 'Atendido' / 'NÃ£o Realizado' para todos os profissionais
 // ================================================
 
-// Meses em ordem cronológica
+// Meses em ordem cronolÃ³gica
 const MONTHS = [
-  'Outubro/25', 'Novembro/25', 'Dezembro/25',
-  'Janeiro/26', 'Fevereiro/26', 'Março/26', 'Abril/26', 'Maio/26', 'Junho/26', 'Julho/26', 'Agosto/26', 'Setembro/26', 'Outubro/26'
+  'Outubro/25', 'Novembro/25', 'Dezembro/25', 'Janeiro/26', 'Fevereiro/26', 'MarÃ§o/26', 'Abril/26', 'Maio/26', 'Junho/26', 'Julho/26', 'Agosto/26', 'Setembro/26', 'Outubro/26'
 ];
 
 const MONTHS_SHORT = [
-  'Out/25', 'Nov/25', 'Dez/25',
-  'Jan/26', 'Fev/26', 'Mar/26', 'Abr/26', 'Mai/26', 'Jun/26', 'Jul/26', 'Ago/26', 'Set/26', 'Out/26'
+  'Out/25', 'Nov/25', 'Dez/25', 'Jan/26', 'Fev/26', 'Mar/26', 'Abr/26', 'Mai/26', 'Jun/26', 'Jul/26', 'Ago/26', 'Set/26', 'Out/26'
 ];
 
 // Totais gerais mensais
 const MONTHLY_DATA = [
-  { month: 'Outubro/25',  realizados:  53, naoRealizados: 104, total: 157 },
-  { month: 'Novembro/25', realizados: 151, naoRealizados: 114, total: 265 },
-  { month: 'Dezembro/25', realizados: 126, naoRealizados: 103, total: 229 },
-  { month: 'Janeiro/26',  realizados:  72, naoRealizados:  56, total: 128 },
-  { month: 'Fevereiro/26',realizados:  68, naoRealizados:  48, total: 116 },
-  { month: 'Março/26',    realizados:  88, naoRealizados:  58, total: 146 },
-  { month: 'Abril/26',    realizados:  75, naoRealizados:  58, total: 133 },
-  { month: 'Maio/26',     realizados:  79, naoRealizados:  46, total: 125 },
-  { month: 'Junho/26',    realizados:  72, naoRealizados:  50, total: 122 },
-  { month: 'Julho/26',    realizados:  81, naoRealizados:  45, total: 126 },
-  { month: 'Agosto/26',   realizados:  93, naoRealizados:  43, total: 136 },
-  { month: 'Setembro/26', realizados:  44, naoRealizados:  40, total:  84 },
-  { month: 'Outubro/26',  realizados:  18, naoRealizados:  18, total:  36 }
+  { month: 'Outubro/25'   , realizados:   53, naoRealizados:  104, total:  157 },
+  { month: 'Novembro/25'  , realizados:  151, naoRealizados:  114, total:  265 },
+  { month: 'Dezembro/25'  , realizados:  126, naoRealizados:  103, total:  229 },
+  { month: 'Janeiro/26'   , realizados:   72, naoRealizados:   56, total:  128 },
+  { month: 'Fevereiro/26' , realizados:   68, naoRealizados:   48, total:  116 },
+  { month: 'MarÃ§o/26'    , realizados:   88, naoRealizados:   58, total:  146 },
+  { month: 'Abril/26'     , realizados:  108, naoRealizados:   70, total:  178 },
+  { month: 'Maio/26'      , realizados:   79, naoRealizados:   46, total:  125 },
+  { month: 'Junho/26'     , realizados:   72, naoRealizados:   50, total:  122 },
+  { month: 'Julho/26'     , realizados:   81, naoRealizados:   45, total:  126 },
+  { month: 'Agosto/26'    , realizados:   93, naoRealizados:   43, total:  136 },
+  { month: 'Setembro/26'  , realizados:   62, naoRealizados:   62, total:  124 },
+  { month: 'Outubro/26'   , realizados:   22, naoRealizados:   31, total:   53 },
 ];
 
 const PROFESSIONALS = [
@@ -37,7 +35,7 @@ const PROFESSIONALS = [
     id: 'camila',
     name: 'Dra. Camila Queiroga',
     nameShort: 'Dra. Camila',
-    role: 'Fonoaudióloga',
+    role: 'FonoaudiÃ³loga',
     specialty: 'Motricidade Orofacial',
     realizados: 200,
     naoRealizados: 210,
@@ -46,26 +44,26 @@ const PROFESSIONALS = [
     colorLight: '#e8f5e9',
     initials: 'C',
     monthly: [
-      { realizados:  44, naoRealizados:  84 }, // Out/25
-      { realizados:  86, naoRealizados:  68 }, // Nov/25
-      { realizados:  70, naoRealizados:  58 }, // Dez/25
-      { realizados:   0, naoRealizados:   0 }, // Jan/26
-      { realizados:   0, naoRealizados:   0 }, // Fev/26
-      { realizados:   0, naoRealizados:   0 }, // Mar/26
-      { realizados:   0, naoRealizados:   0 }, // Abr/26
-      { realizados:   0, naoRealizados:   0 }, // Mai/26
-      { realizados:   0, naoRealizados:   0 }, // Jun/26
-      { realizados:   0, naoRealizados:   0 }, // Jul/26
-      { realizados:   0, naoRealizados:   0 }, // Ago/26
-      { realizados:   0, naoRealizados:   0 }, // Set/26
-      { realizados:   0, naoRealizados:   0 }  // Out/26
+      { realizados:   44, naoRealizados:   84 }, // Out/25
+      { realizados:   86, naoRealizados:   68 }, // Nov/25
+      { realizados:   70, naoRealizados:   58 }, // Dez/25
+      { realizados:    0, naoRealizados:    0 }, // Jan/26
+      { realizados:    0, naoRealizados:    0 }, // Fev/26
+      { realizados:    0, naoRealizados:    0 }, // Mar/26
+      { realizados:    0, naoRealizados:    0 }, // Abr/26
+      { realizados:    0, naoRealizados:    0 }, // Mai/26
+      { realizados:    0, naoRealizados:    0 }, // Jun/26
+      { realizados:    0, naoRealizados:    0 }, // Jul/26
+      { realizados:    0, naoRealizados:    0 }, // Ago/26
+      { realizados:    0, naoRealizados:    0 }, // Set/26
+      { realizados:    0, naoRealizados:    0 }, // Out/26
     ]
   },
   {
     id: 'priscila',
     name: 'Dra. Priscila Ferreira',
     nameShort: 'Dra. Priscila',
-    role: 'Psicóloga',
+    role: 'PsicÃ³loga',
     specialty: 'Terapia Cognitivo-Comportamental',
     realizados: 811,
     naoRealizados: 559,
@@ -74,26 +72,26 @@ const PROFESSIONALS = [
     colorLight: '#dbeafe',
     initials: 'P',
     monthly: [
-      { realizados:   0, naoRealizados:   6 }, // Out/25
-      { realizados:  65, naoRealizados:  46 }, // Nov/25
-      { realizados:  56, naoRealizados:  45 }, // Dez/25
-      { realizados:  72, naoRealizados:  56 }, // Jan/26
-      { realizados:  68, naoRealizados:  48 }, // Fev/26
-      { realizados:  88, naoRealizados:  58 }, // Mar/26
-      { realizados:  75, naoRealizados:  58 }, // Abr/26
-      { realizados:  79, naoRealizados:  46 }, // Mai/26
-      { realizados:  72, naoRealizados:  50 }, // Jun/26
-      { realizados:  81, naoRealizados:  45 }, // Jul/26
-      { realizados:  93, naoRealizados:  43 }, // Ago/26
-      { realizados:  44, naoRealizados:  40 }, // Set/26
-      { realizados:  18, naoRealizados:  18 }  // Out/26
+      { realizados:    0, naoRealizados:    6 }, // Out/25
+      { realizados:   65, naoRealizados:   46 }, // Nov/25
+      { realizados:   56, naoRealizados:   45 }, // Dez/25
+      { realizados:   72, naoRealizados:   56 }, // Jan/26
+      { realizados:   68, naoRealizados:   48 }, // Fev/26
+      { realizados:   88, naoRealizados:   58 }, // Mar/26
+      { realizados:   75, naoRealizados:   58 }, // Abr/26
+      { realizados:   79, naoRealizados:   46 }, // Mai/26
+      { realizados:   72, naoRealizados:   50 }, // Jun/26
+      { realizados:   81, naoRealizados:   45 }, // Jul/26
+      { realizados:   93, naoRealizados:   43 }, // Ago/26
+      { realizados:   44, naoRealizados:   40 }, // Set/26
+      { realizados:   18, naoRealizados:   18 }, // Out/26
     ]
   },
   {
     id: 'alice',
     name: 'Dra. Alice Peixoto',
     nameShort: 'Dra. Alice',
-    role: 'Médica',
+    role: 'MÃ©dica',
     specialty: 'Cardiologista',
     realizados: 0,
     naoRealizados: 0,
@@ -102,26 +100,26 @@ const PROFESSIONALS = [
     colorLight: '#ede9fe',
     initials: 'A',
     monthly: [
-      { realizados: 0, naoRealizados: 0 }, // Out/25
-      { realizados: 0, naoRealizados: 0 }, // Nov/25
-      { realizados: 0, naoRealizados: 0 }, // Dez/25
-      { realizados: 0, naoRealizados: 0 }, // Jan/26
-      { realizados: 0, naoRealizados: 0 }, // Fev/26
-      { realizados: 0, naoRealizados: 0 }, // Mar/26
-      { realizados: 0, naoRealizados: 0 }, // Abr/26
-      { realizados: 0, naoRealizados: 0 }, // Mai/26
-      { realizados: 0, naoRealizados: 0 }, // Jun/26
-      { realizados: 0, naoRealizados: 0 }, // Jul/26
-      { realizados: 0, naoRealizados: 0 }, // Ago/26
-      { realizados: 0, naoRealizados: 0 }, // Set/26
-      { realizados: 0, naoRealizados: 0 }  // Out/26
+      { realizados:    0, naoRealizados:    0 }, // Out/25
+      { realizados:    0, naoRealizados:    0 }, // Nov/25
+      { realizados:    0, naoRealizados:    0 }, // Dez/25
+      { realizados:    0, naoRealizados:    0 }, // Jan/26
+      { realizados:    0, naoRealizados:    0 }, // Fev/26
+      { realizados:    0, naoRealizados:    0 }, // Mar/26
+      { realizados:    0, naoRealizados:    0 }, // Abr/26
+      { realizados:    0, naoRealizados:    0 }, // Mai/26
+      { realizados:    0, naoRealizados:    0 }, // Jun/26
+      { realizados:    0, naoRealizados:    0 }, // Jul/26
+      { realizados:    0, naoRealizados:    0 }, // Ago/26
+      { realizados:    0, naoRealizados:    0 }, // Set/26
+      { realizados:    0, naoRealizados:    0 }, // Out/26
     ]
   },
   {
     id: 'barbara',
     name: 'Dra. Barbara Cavalheiro',
     nameShort: 'Dra. Barbara',
-    role: 'Fonoaudióloga',
+    role: 'FonoaudiÃ³loga',
     specialty: 'Audiologia',
     realizados: 0,
     naoRealizados: 0,
@@ -130,26 +128,26 @@ const PROFESSIONALS = [
     colorLight: '#e0e7ff',
     initials: 'B',
     monthly: [
-      { realizados: 0, naoRealizados: 0 }, // Out/25
-      { realizados: 0, naoRealizados: 0 }, // Nov/25
-      { realizados: 0, naoRealizados: 0 }, // Dez/25
-      { realizados: 0, naoRealizados: 0 }, // Jan/26
-      { realizados: 0, naoRealizados: 0 }, // Fev/26
-      { realizados: 0, naoRealizados: 0 }, // Mar/26
-      { realizados: 0, naoRealizados: 0 }, // Abr/26
-      { realizados: 0, naoRealizados: 0 }, // Mai/26
-      { realizados: 0, naoRealizados: 0 }, // Jun/26
-      { realizados: 0, naoRealizados: 0 }, // Jul/26
-      { realizados: 0, naoRealizados: 0 }, // Ago/26
-      { realizados: 0, naoRealizados: 0 }, // Set/26
-      { realizados: 0, naoRealizados: 0 }  // Out/26
+      { realizados:    0, naoRealizados:    0 }, // Out/25
+      { realizados:    0, naoRealizados:    0 }, // Nov/25
+      { realizados:    0, naoRealizados:    0 }, // Dez/25
+      { realizados:    0, naoRealizados:    0 }, // Jan/26
+      { realizados:    0, naoRealizados:    0 }, // Fev/26
+      { realizados:    0, naoRealizados:    0 }, // Mar/26
+      { realizados:    0, naoRealizados:    0 }, // Abr/26
+      { realizados:    0, naoRealizados:    0 }, // Mai/26
+      { realizados:    0, naoRealizados:    0 }, // Jun/26
+      { realizados:    0, naoRealizados:    0 }, // Jul/26
+      { realizados:    0, naoRealizados:    0 }, // Ago/26
+      { realizados:    0, naoRealizados:    0 }, // Set/26
+      { realizados:    0, naoRealizados:    0 }, // Out/26
     ]
   },
   {
     id: 'karizia',
     name: 'Dra. Karizia Bianca',
     nameShort: 'Dra. Karizia',
-    role: 'Psicóloga',
+    role: 'PsicÃ³loga',
     specialty: 'Psicologia Escolar',
     realizados: 0,
     naoRealizados: 0,
@@ -158,19 +156,19 @@ const PROFESSIONALS = [
     colorLight: '#ecfeff',
     initials: 'K',
     monthly: [
-      { realizados: 0, naoRealizados: 0 }, // Out/25
-      { realizados: 0, naoRealizados: 0 }, // Nov/25
-      { realizados: 0, naoRealizados: 0 }, // Dez/25
-      { realizados: 0, naoRealizados: 0 }, // Jan/26
-      { realizados: 0, naoRealizados: 0 }, // Fev/26
-      { realizados: 0, naoRealizados: 0 }, // Mar/26
-      { realizados: 0, naoRealizados: 0 }, // Abr/26
-      { realizados: 0, naoRealizados: 0 }, // Mai/26
-      { realizados: 0, naoRealizados: 0 }, // Jun/26
-      { realizados: 0, naoRealizados: 0 }, // Jul/26
-      { realizados: 0, naoRealizados: 0 }, // Ago/26
-      { realizados: 0, naoRealizados: 0 }, // Set/26
-      { realizados: 0, naoRealizados: 0 }  // Out/26
+      { realizados:    0, naoRealizados:    0 }, // Out/25
+      { realizados:    0, naoRealizados:    0 }, // Nov/25
+      { realizados:    0, naoRealizados:    0 }, // Dez/25
+      { realizados:    0, naoRealizados:    0 }, // Jan/26
+      { realizados:    0, naoRealizados:    0 }, // Fev/26
+      { realizados:    0, naoRealizados:    0 }, // Mar/26
+      { realizados:    0, naoRealizados:    0 }, // Abr/26
+      { realizados:    0, naoRealizados:    0 }, // Mai/26
+      { realizados:    0, naoRealizados:    0 }, // Jun/26
+      { realizados:    0, naoRealizados:    0 }, // Jul/26
+      { realizados:    0, naoRealizados:    0 }, // Ago/26
+      { realizados:    0, naoRealizados:    0 }, // Set/26
+      { realizados:    0, naoRealizados:    0 }, // Out/26
     ]
   },
   {
@@ -178,7 +176,7 @@ const PROFESSIONALS = [
     name: 'Dra. Jessika Tolentino',
     nameShort: 'Dra. Jessika',
     role: 'Terapeuta Ocupacional',
-    specialty: 'Integração Sensorial',
+    specialty: 'IntegraÃ§Ã£o Sensorial',
     realizados: 4,
     naoRealizados: 4,
     total: 8,
@@ -186,19 +184,19 @@ const PROFESSIONALS = [
     colorLight: '#fce7f3',
     initials: 'J',
     monthly: [
-      { realizados: 4, naoRealizados: 4 }, // Out/25
-      { realizados: 0, naoRealizados: 0 }, // Nov/25
-      { realizados: 0, naoRealizados: 0 }, // Dez/25
-      { realizados: 0, naoRealizados: 0 }, // Jan/26
-      { realizados: 0, naoRealizados: 0 }, // Fev/26
-      { realizados: 0, naoRealizados: 0 }, // Mar/26
-      { realizados: 0, naoRealizados: 0 }, // Abr/26
-      { realizados: 0, naoRealizados: 0 }, // Mai/26
-      { realizados: 0, naoRealizados: 0 }, // Jun/26
-      { realizados: 0, naoRealizados: 0 }, // Jul/26
-      { realizados: 0, naoRealizados: 0 }, // Ago/26
-      { realizados: 0, naoRealizados: 0 }, // Set/26
-      { realizados: 0, naoRealizados: 0 }  // Out/26
+      { realizados:    4, naoRealizados:    4 }, // Out/25
+      { realizados:    0, naoRealizados:    0 }, // Nov/25
+      { realizados:    0, naoRealizados:    0 }, // Dez/25
+      { realizados:    0, naoRealizados:    0 }, // Jan/26
+      { realizados:    0, naoRealizados:    0 }, // Fev/26
+      { realizados:    0, naoRealizados:    0 }, // Mar/26
+      { realizados:    0, naoRealizados:    0 }, // Abr/26
+      { realizados:    0, naoRealizados:    0 }, // Mai/26
+      { realizados:    0, naoRealizados:    0 }, // Jun/26
+      { realizados:    0, naoRealizados:    0 }, // Jul/26
+      { realizados:    0, naoRealizados:    0 }, // Ago/26
+      { realizados:    0, naoRealizados:    0 }, // Set/26
+      { realizados:    0, naoRealizados:    0 }, // Out/26
     ]
   },
   {
@@ -214,19 +212,103 @@ const PROFESSIONALS = [
     colorLight: '#d1fae5',
     initials: 'V',
     monthly: [
-      { realizados: 5, naoRealizados: 10 }, // Out/25
-      { realizados: 0, naoRealizados:  0 }, // Nov/25
-      { realizados: 0, naoRealizados:  0 }, // Dez/25
-      { realizados: 0, naoRealizados:  0 }, // Jan/26
-      { realizados: 0, naoRealizados:  0 }, // Fev/26
-      { realizados: 0, naoRealizados:  0 }, // Mar/26
-      { realizados: 0, naoRealizados:  0 }, // Abr/26
-      { realizados: 0, naoRealizados:  0 }, // Mai/26
-      { realizados: 0, naoRealizados:  0 }, // Jun/26
-      { realizados: 0, naoRealizados:  0 }, // Jul/26
-      { realizados: 0, naoRealizados:  0 }, // Ago/26
-      { realizados: 0, naoRealizados:  0 }, // Set/26
-      { realizados: 0, naoRealizados:  0 }  // Out/26
+      { realizados:    5, naoRealizados:   10 }, // Out/25
+      { realizados:    0, naoRealizados:    0 }, // Nov/25
+      { realizados:    0, naoRealizados:    0 }, // Dez/25
+      { realizados:    0, naoRealizados:    0 }, // Jan/26
+      { realizados:    0, naoRealizados:    0 }, // Fev/26
+      { realizados:    0, naoRealizados:    0 }, // Mar/26
+      { realizados:    0, naoRealizados:    0 }, // Abr/26
+      { realizados:    0, naoRealizados:    0 }, // Mai/26
+      { realizados:    0, naoRealizados:    0 }, // Jun/26
+      { realizados:    0, naoRealizados:    0 }, // Jul/26
+      { realizados:    0, naoRealizados:    0 }, // Ago/26
+      { realizados:    0, naoRealizados:    0 }, // Set/26
+      { realizados:    0, naoRealizados:    0 }, // Out/26
+    ]
+  },
+  {
+    id: 'milene',
+    name: 'Dra. Milene Miranda',
+    nameShort: 'Dra. Milene',
+    role: 'MÃ©dica',
+    specialty: 'Telemedicina / AutÃ´nomo',
+    realizados: 10,
+    naoRealizados: 22,
+    total: 32,
+    color: '#ea580c',
+    colorLight: '#ffedd5',
+    initials: 'M',
+    monthly: [
+      { realizados:    0, naoRealizados:    0 }, // Out/25
+      { realizados:    0, naoRealizados:    0 }, // Nov/25
+      { realizados:    0, naoRealizados:    0 }, // Dez/25
+      { realizados:    0, naoRealizados:    0 }, // Jan/26
+      { realizados:    0, naoRealizados:    0 }, // Fev/26
+      { realizados:    0, naoRealizados:    0 }, // Mar/26
+      { realizados:    0, naoRealizados:    0 }, // Abr/26
+      { realizados:    0, naoRealizados:    0 }, // Mai/26
+      { realizados:    0, naoRealizados:    0 }, // Jun/26
+      { realizados:    0, naoRealizados:    0 }, // Jul/26
+      { realizados:    0, naoRealizados:    0 }, // Ago/26
+      { realizados:    6, naoRealizados:    9 }, // Set/26
+      { realizados:    4, naoRealizados:   13 }, // Out/26
+    ]
+  },
+  {
+    id: 'liberato',
+    name: 'Dra. Liberato de Lima',
+    nameShort: 'Dra. Liberato',
+    role: 'MÃ©dica',
+    specialty: 'Telemedicina / AutÃ´nomo',
+    realizados: 33,
+    naoRealizados: 12,
+    total: 45,
+    color: '#be185d',
+    colorLight: '#fce7f3',
+    initials: 'L',
+    monthly: [
+      { realizados:    0, naoRealizados:    0 }, // Out/25
+      { realizados:    0, naoRealizados:    0 }, // Nov/25
+      { realizados:    0, naoRealizados:    0 }, // Dez/25
+      { realizados:    0, naoRealizados:    0 }, // Jan/26
+      { realizados:    0, naoRealizados:    0 }, // Fev/26
+      { realizados:    0, naoRealizados:    0 }, // Mar/26
+      { realizados:   33, naoRealizados:   12 }, // Abr/26
+      { realizados:    0, naoRealizados:    0 }, // Mai/26
+      { realizados:    0, naoRealizados:    0 }, // Jun/26
+      { realizados:    0, naoRealizados:    0 }, // Jul/26
+      { realizados:    0, naoRealizados:    0 }, // Ago/26
+      { realizados:    0, naoRealizados:    0 }, // Set/26
+      { realizados:    0, naoRealizados:    0 }, // Out/26
+    ]
+  },
+  {
+    id: 'viridiana',
+    name: 'Dra. Viridiana Dourado Castro',
+    nameShort: 'Dra. Viridiana',
+    role: 'MÃ©dica',
+    specialty: 'Telemedicina / AutÃ´nomo',
+    realizados: 12,
+    naoRealizados: 13,
+    total: 25,
+    color: '#7e22ce',
+    colorLight: '#f3e8ff',
+    initials: 'VD',
+    monthly: [
+      { realizados:    0, naoRealizados:    0 }, // Out/25
+      { realizados:    0, naoRealizados:    0 }, // Nov/25
+      { realizados:    0, naoRealizados:    0 }, // Dez/25
+      { realizados:    0, naoRealizados:    0 }, // Jan/26
+      { realizados:    0, naoRealizados:    0 }, // Fev/26
+      { realizados:    0, naoRealizados:    0 }, // Mar/26
+      { realizados:    0, naoRealizados:    0 }, // Abr/26
+      { realizados:    0, naoRealizados:    0 }, // Mai/26
+      { realizados:    0, naoRealizados:    0 }, // Jun/26
+      { realizados:    0, naoRealizados:    0 }, // Jul/26
+      { realizados:    0, naoRealizados:    0 }, // Ago/26
+      { realizados:   12, naoRealizados:   13 }, // Set/26
+      { realizados:    0, naoRealizados:    0 }, // Out/26
     ]
   },
   {
@@ -234,7 +316,7 @@ const PROFESSIONALS = [
     name: 'Dra. Vera Lucia',
     nameShort: 'Dra. Vera',
     role: 'Assistente Social',
-    specialty: 'Saúde Coletiva',
+    specialty: 'SaÃºde Coletiva',
     realizados: 0,
     naoRealizados: 0,
     total: 0,
@@ -242,19 +324,19 @@ const PROFESSIONALS = [
     colorLight: '#fef3c7',
     initials: 'VL',
     monthly: [
-      { realizados: 0, naoRealizados: 0 }, // Out/25
-      { realizados: 0, naoRealizados: 0 }, // Nov/25
-      { realizados: 0, naoRealizados: 0 }, // Dez/25
-      { realizados: 0, naoRealizados: 0 }, // Jan/26
-      { realizados: 0, naoRealizados: 0 }, // Fev/26
-      { realizados: 0, naoRealizados: 0 }, // Mar/26
-      { realizados: 0, naoRealizados: 0 }, // Abr/26
-      { realizados: 0, naoRealizados: 0 }, // Mai/26
-      { realizados: 0, naoRealizados: 0 }, // Jun/26
-      { realizados: 0, naoRealizados: 0 }, // Jul/26
-      { realizados: 0, naoRealizados: 0 }, // Ago/26
-      { realizados: 0, naoRealizados: 0 }, // Set/26
-      { realizados: 0, naoRealizados: 0 }  // Out/26
+      { realizados:    0, naoRealizados:    0 }, // Out/25
+      { realizados:    0, naoRealizados:    0 }, // Nov/25
+      { realizados:    0, naoRealizados:    0 }, // Dez/25
+      { realizados:    0, naoRealizados:    0 }, // Jan/26
+      { realizados:    0, naoRealizados:    0 }, // Fev/26
+      { realizados:    0, naoRealizados:    0 }, // Mar/26
+      { realizados:    0, naoRealizados:    0 }, // Abr/26
+      { realizados:    0, naoRealizados:    0 }, // Mai/26
+      { realizados:    0, naoRealizados:    0 }, // Jun/26
+      { realizados:    0, naoRealizados:    0 }, // Jul/26
+      { realizados:    0, naoRealizados:    0 }, // Ago/26
+      { realizados:    0, naoRealizados:    0 }, // Set/26
+      { realizados:    0, naoRealizados:    0 }, // Out/26
     ]
   }
 ];
