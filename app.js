@@ -233,13 +233,24 @@ function mkProfLineChart(id, prof) {
    ============================================================ */
 const OverviewPage = {
   render() {
-    let startIdx = 0, endIdx = 5;
+    let startIdx = 0, endIdx = MONTHS.length - 1;
     const gs = document.getElementById('globalStartMonth'), ge = document.getElementById('globalEndMonth');
+    const dateToIdx = (dateStr, isEnd = false) => {
+      if(!dateStr) return isEnd ? MONTHS.length - 1 : 0;
+      const parts = dateStr.split('-');
+      if(parts.length < 2) return isEnd ? MONTHS.length - 1 : 0;
+      const yearShort = parts[0].substring(2);
+      const monthNum = parseInt(parts[1], 10);
+      const mNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+      const targetStr = `${mNames[monthNum - 1]}/${yearShort}`;
+      const foundIdx = MONTHS.indexOf(targetStr);
+      if (foundIdx !== -1) return foundIdx;
+      return isEnd ? MONTHS.length - 1 : 0;
+    };
+
     if(gs && ge && gs.value && ge.value) { 
-      startIdx = parseInt(gs.value.split('-')[1], 10) - 1; 
-      endIdx = parseInt(ge.value.split('-')[1], 10) - 1; 
-      if(isNaN(startIdx) || startIdx < 0) startIdx = 0;
-      if(isNaN(endIdx) || endIdx > 5) endIdx = 5;
+      startIdx = dateToIdx(gs.value, false);
+      endIdx = dateToIdx(ge.value, true);
       if(startIdx > endIdx) endIdx = startIdx; 
     }
     
@@ -256,6 +267,22 @@ const OverviewPage = {
       { id:'total',         label:'Total de Agendamentos',   val:t, sub:'Realizados + não realizados', cls:'kpi-blue', trend:'neutral', trendTxt:'Total', icon:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>' },
       { id:'media',         label:'Média Mensal Realizada',  val:m,  sub:'Atendimentos por mês', cls:'kpi-purple', trend:'up', trendTxt:'+1,8%', icon:'<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>' },
     ];
+
+    const maxVol = fd.reduce((max, d) => d.realizados > max.realizados ? d : max, fd[0] || { month: 'N/A', realizados: 0 });
+    const maxRate = fd.reduce((max, d) => {
+      const rate = parseFloat(pct(d.realizados, d.total));
+      return rate > max.rate ? { month: d.month, rate } : max;
+    }, { month: 'N/A', rate: 0 });
+    const maxNR = fd.reduce((max, d) => d.naoRealizados > max.naoRealizados ? d : max, fd[0] || { month: 'N/A', naoRealizados: 0 });
+    const avgNR = Math.round(nr / (fd.length || 1));
+
+    const highlights = [
+      { cls:'green-bg',  label:'Maior volume',           title: maxVol.month,          desc: `${fmtN(maxVol.realizados)} atendimentos`, icon:'<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>' },
+      { cls:'yellow-bg', label:'Aproveitamento',         title: maxRate.month,         desc: `Taxa de ${maxRate.rate}%`, icon:'<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>' },
+      { cls:'red-bg',    label:'Atenção',                title: maxNR.month,           desc: `${fmtN(maxNR.naoRealizados)} não realizados`, icon:'<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>' },
+      { cls:'blue-bg',   label:'Média não real.',        title: `~${avgNR} / mês`,     desc: 'No período', icon:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>' },
+    ];
+
     return `
     <section class="kpi-section" aria-label="Indicadores principais">
       ${kpis.map(k=>`
@@ -287,7 +314,7 @@ const OverviewPage = {
       <div class="chart-card">
         <div class="chart-card-header"><div>
           <h2 class="chart-title">Panorama Geral</h2>
-          <p class="chart-subtitle">Semestre consolidado</p>
+          <p class="chart-subtitle">Consolidado do período</p>
         </div></div>
         <div class="donut-wrapper">
           <canvas id="ovDonutChart"></canvas>
@@ -317,12 +344,7 @@ const OverviewPage = {
     </section>
 
     <section class="highlights-grid" aria-label="Destaques">
-      ${[
-        { cls:'green-bg',  label:'Maior volume',           title:'Março',                desc:'210 atendimentos', icon:'<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>' },
-        { cls:'yellow-bg', label:'Aproveitamento',         title:'Maio',                 desc:'Taxa de 84,5%', icon:'<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>' },
-        { cls:'red-bg',    label:'Atenção',                title:'Junho',                desc:'55 não realizados', icon:'<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>' },
-        { cls:'blue-bg',   label:'Média não real.',        title:'~42 / mês',            desc:'No semestre', icon:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>' },
-      ].map(h=>`
+      ${highlights.map(h=>`
         <div class="highlight-item highlight-card-style">
           <div class="highlight-icon ${h.cls}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${h.icon}</svg></div>
           <div class="highlight-content">
@@ -339,13 +361,24 @@ const OverviewPage = {
   },
 
   init() {
-    let startIdx = 0, endIdx = 5;
+    let startIdx = 0, endIdx = MONTHS.length - 1;
     const gs = document.getElementById('globalStartMonth'), ge = document.getElementById('globalEndMonth');
+    const dateToIdx = (dateStr, isEnd = false) => {
+      if(!dateStr) return isEnd ? MONTHS.length - 1 : 0;
+      const parts = dateStr.split('-');
+      if(parts.length < 2) return isEnd ? MONTHS.length - 1 : 0;
+      const yearShort = parts[0].substring(2);
+      const monthNum = parseInt(parts[1], 10);
+      const mNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+      const targetStr = `${mNames[monthNum - 1]}/${yearShort}`;
+      const foundIdx = MONTHS.indexOf(targetStr);
+      if (foundIdx !== -1) return foundIdx;
+      return isEnd ? MONTHS.length - 1 : 0;
+    };
+
     if(gs && ge && gs.value && ge.value) { 
-      startIdx = parseInt(gs.value.split('-')[1], 10) - 1; 
-      endIdx = parseInt(ge.value.split('-')[1], 10) - 1; 
-      if(isNaN(startIdx) || startIdx < 0) startIdx = 0;
-      if(isNaN(endIdx) || endIdx > 5) endIdx = 5;
+      startIdx = dateToIdx(gs.value, false);
+      endIdx = dateToIdx(ge.value, true);
       if(startIdx > endIdx) endIdx = startIdx; 
     }
     
@@ -369,11 +402,35 @@ const OverviewPage = {
    6. PAGE: PROFESSIONALS
    ============================================================ */
 const ProfessionalsPage = {
+  getFilteredRange() {
+    let startIdx = 0, endIdx = MONTHS.length - 1;
+    const gs = document.getElementById('globalStartMonth'), ge = document.getElementById('globalEndMonth');
+    const dateToIdx = (dateStr, isEnd = false) => {
+      if(!dateStr) return isEnd ? MONTHS.length - 1 : 0;
+      const parts = dateStr.split('-');
+      if(parts.length < 2) return isEnd ? MONTHS.length - 1 : 0;
+      const yearShort = parts[0].substring(2);
+      const monthNum = parseInt(parts[1], 10);
+      const mNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+      const targetStr = `${mNames[monthNum - 1]}/${yearShort}`;
+      const foundIdx = MONTHS.indexOf(targetStr);
+      if (foundIdx !== -1) return foundIdx;
+      return isEnd ? MONTHS.length - 1 : 0;
+    };
+    if(gs && ge && gs.value && ge.value) { 
+      startIdx = dateToIdx(gs.value, false);
+      endIdx = dateToIdx(ge.value, true);
+      if(startIdx > endIdx) endIdx = startIdx; 
+    }
+    return { startIdx, endIdx };
+  },
+
   render() {
+    const { startIdx, endIdx } = this.getFilteredRange();
     return `
     <div class="prof-page">
       <div class="prof-detail-grid">
-        ${PROFESSIONALS.map((prof, i) => this._renderCard(prof, i)).join('')}
+        ${PROFESSIONALS.map((prof, i) => this._renderCard(prof, i, startIdx, endIdx)).join('')}
       </div>
       <div class="comparison-card">
         <div class="chart-card-header">
@@ -382,7 +439,7 @@ const ProfessionalsPage = {
             <p class="chart-subtitle">Realizados por mês — análise comparativa entre profissionais</p>
           </div>
           <div class="chart-legend">
-            ${PROFESSIONALS.map(p=>`<span class="legend-dot" style="background:${p.color}"></span><span>${p.nameShort || p.name.split(' ').slice(-1)[0]}</span>`).join('')}
+            ${PROFESSIONALS.map(p=>`<span class="legend-dot" style="background:${p.color}"></span><span>${p.nameShort || p.name}</span>`).join('')}
           </div>
         </div>
         <div class="comparison-chart-container"><canvas id="comparisonChart"></canvas></div>
@@ -390,12 +447,18 @@ const ProfessionalsPage = {
     </div>`;
   },
 
-  _renderCard(prof, i) {
-    const r     = pct(prof.realizados, prof.total);
-    const rows  = MONTHS.map((m, j) => {
-      const d     = prof.monthly[j];
-      const tot   = d.realizados + d.naoRealizados;
-      const rate  = pct(d.realizados, tot);
+  _renderCard(prof, i, startIdx, endIdx) {
+    const fMonthly = prof.monthly.slice(startIdx, endIdx + 1);
+    const fRealizados = fMonthly.reduce((s, m) => s + m.realizados, 0);
+    const fNaoRealizados = fMonthly.reduce((s, m) => s + m.naoRealizados, 0);
+    const fTotal = fRealizados + fNaoRealizados;
+    const r = pct(fRealizados, fTotal);
+
+    const rows = MONTHS.slice(startIdx, endIdx + 1).map((m, relativeIdx) => {
+      const j = startIdx + relativeIdx;
+      const d = prof.monthly[j];
+      const tot = d.realizados + d.naoRealizados;
+      const rate = pct(d.realizados, tot);
       return `<tr>
         <td><strong>${MONTHS_SHORT[j]}</strong></td>
         <td class="text-right green-text">${d.realizados}</td>
@@ -404,6 +467,7 @@ const ProfessionalsPage = {
         <td class="text-right" style="font-weight:700;color:${prof.color}">${rate}%</td>
       </tr>`;
     }).join('');
+
     return `
     <div class="prof-detail-card">
       <div class="prof-detail-banner" style="background:linear-gradient(135deg,${prof.color},${prof.color}88)">
@@ -416,15 +480,15 @@ const ProfessionalsPage = {
         </div>
         <div class="prof-kpi-row">
           <div class="prof-kpi-item">
-            <span class="prof-kpi-val" style="color:var(--green)" data-target="${prof.realizados}">0</span>
+            <span class="prof-kpi-val" style="color:var(--green)" data-target="${fRealizados}">0</span>
             <span class="prof-kpi-label">Realizados</span>
           </div>
           <div class="prof-kpi-item">
-            <span class="prof-kpi-val" style="color:var(--red)" data-target="${prof.naoRealizados}">0</span>
+            <span class="prof-kpi-val" style="color:var(--red)" data-target="${fNaoRealizados}">0</span>
             <span class="prof-kpi-label">Não real.</span>
           </div>
           <div class="prof-kpi-item">
-            <span class="prof-kpi-val" data-target="${prof.total}">0</span>
+            <span class="prof-kpi-val" data-target="${fTotal}">0</span>
             <span class="prof-kpi-label">Total</span>
           </div>
         </div>
@@ -447,8 +511,52 @@ const ProfessionalsPage = {
   },
 
   init() {
+    const { startIdx, endIdx } = this.getFilteredRange();
+    const lbls = MONTHS_SHORT.slice(startIdx, endIdx + 1);
+
     observeCounters();
-    PROFESSIONALS.forEach((prof, i) => mkProfLineChart(`profChart${i}`, prof));
+    
+    PROFESSIONALS.forEach((prof, i) => {
+      const el = document.getElementById(`profChart${i}`);
+      if (!el) return;
+      const ctx = el.getContext('2d');
+      const g = ctx.createLinearGradient(0,0,0,180);
+      g.addColorStop(0, prof.color+'44');
+      g.addColorStop(1, prof.color+'00');
+
+      const fMonthly = prof.monthly.slice(startIdx, endIdx + 1);
+
+      const c = new Chart(el, {
+        type: 'line',
+        data: {
+          labels: lbls,
+          datasets: [
+            {
+              label:'Realizados', data: fMonthly.map(m=>m.realizados),
+              borderColor:prof.color, backgroundColor:g, borderWidth:2.5,
+              pointRadius:5, pointBackgroundColor:prof.color, pointBorderColor:'#fff', pointBorderWidth:2,
+              pointHoverRadius:8, fill:true, tension:.4,
+            },
+            {
+              label:'Não Realizados', data: fMonthly.map(m=>m.naoRealizados),
+              borderColor:C.red, backgroundColor:'rgba(239,68,68,.08)', borderWidth:2,
+              pointRadius:4, pointBackgroundColor:C.red, pointBorderColor:'#fff', pointBorderWidth:2,
+              fill:true, tension:.4,
+            },
+          ],
+        },
+        options: {
+          responsive:true, maintainAspectRatio:false,
+          interaction:{mode:'index',intersect:false},
+          plugins:{ legend:{ display:true, position:'top', labels:{font:{size:11}, boxWidth:8, boxHeight:8, usePointStyle:true} } },
+          scales:{
+            x:{ grid:{display:false}, border:{display:false}, ticks:{font:{size:11},color:textColor()} },
+            y:{ beginAtZero:true, grid:{color:gridColor()}, border:{display:false}, ticks:{font:{size:11},color:textColor()} },
+          },
+        },
+      });
+      Charts.add(`profChart${i}`, c);
+    });
 
     /* Comparison bar chart */
     const el = document.getElementById('comparisonChart');
@@ -456,10 +564,10 @@ const ProfessionalsPage = {
       const c = new Chart(el, {
         type: 'bar',
         data: {
-          labels: MONTHS_SHORT,
+          labels: lbls,
           datasets: PROFESSIONALS.map(prof => ({
             label: prof.nameShort || prof.name,
-            data: prof.monthly.map(m => m.realizados),
+            data: prof.monthly.slice(startIdx, endIdx + 1).map(m => m.realizados),
             backgroundColor: prof.color + 'cc',
             borderRadius: 7,
             borderSkipped: false,
@@ -484,7 +592,7 @@ const ProfessionalsPage = {
    7. PAGE: REPORTS
    ============================================================ */
 let reportsState = {
-  months: [0,1,2,3,4,5],
+  months: Array.from({length: MONTHS.length}, (_, i) => i),
   professionals: PROFESSIONALS.map(p=>p.id),
 };
 
@@ -505,9 +613,9 @@ const ReportsPage = {
           <span class="filter-label">Profissionais</span>
           <div class="filter-chips" id="profChips">
             ${PROFESSIONALS.map(p=>`
-              <button class="prof-filter-chip active style-${p.color==='#7c3aed'?'purple':'blue'}" data-prof="${p.id}">
+              <button class="prof-filter-chip active" style="border-color:${p.color}; background:${p.colorLight}" data-prof="${p.id}" id="pchip-${p.id}">
                 <span class="prof-filter-chip-dot" style="background:${p.color}"></span>
-                ${p.initials}
+                <span>${p.nameShort || p.name}</span>
               </button>`).join('')}
           </div>
         </div>
@@ -598,7 +706,7 @@ const ReportsPage = {
   },
 
   init() {
-    reportsState = { months:[0,1,2,3,4,5], professionals: PROFESSIONALS.map(p=>p.id) };
+    reportsState = { months: Array.from({length: MONTHS.length}, (_, i) => i), professionals: PROFESSIONALS.map(p=>p.id) };
 
     /* Initial charts */
     this._buildCharts();
@@ -630,10 +738,15 @@ const ReportsPage = {
           if (reportsState.professionals.length > 1) {
             reportsState.professionals = reportsState.professionals.filter(x=>x!==pid);
             btn.classList.remove('active');
+            btn.style.borderColor = '';
+            btn.style.background = '';
           }
         } else {
           reportsState.professionals.push(pid);
           btn.classList.add('active');
+          const p = PROFESSIONALS.find(x=>x.id === pid);
+          btn.style.borderColor = p.color;
+          btn.style.background = p.colorLight;
         }
         this._refresh();
       });
@@ -915,6 +1028,77 @@ const SettingsPage = {
           </div>
         </div>
 
+        <!-- Importação de Dados Excel -->
+        <div class="settings-card" style="grid-column:1/-1">
+          <div class="settings-card-header">
+            <div class="settings-card-icon" style="background:#e8f5e9;color:#1b7a3e">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M8 13h8M8 17h5"/></svg>
+            </div>
+            <div>
+              <div class="settings-card-title">Importar Planilha Excel (.xlsx)</div>
+              <div class="settings-card-desc">Arraste sua planilha Excel e o dashboard atualiza automaticamente</div>
+            </div>
+          </div>
+
+          <!-- Drop zone -->
+          <label id="importDropZone" for="xlsxFileInput" style="
+            display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
+            border:2px dashed var(--border);border-radius:var(--radius);
+            padding:40px 20px;cursor:pointer;transition:all var(--transition);
+            background:var(--surface-2);text-align:center;position:relative;
+          ">
+            <div style="width:56px;height:56px;border-radius:16px;background:#e8f5e9;display:flex;align-items:center;justify-content:center;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#1b7a3e" stroke-width="1.8" width="28" height="28"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </div>
+            <div>
+              <p style="font-size:.95rem;font-weight:700;color:var(--text-primary);margin-bottom:4px">Arraste o arquivo .xlsx aqui</p>
+              <p style="font-size:.78rem;color:var(--text-muted)">ou clique para selecionar · Suporte a Excel 97-2024</p>
+            </div>
+            <div id="importFileNameBadge" style="display:none;background:var(--blue-light);color:var(--blue);font-size:.78rem;font-weight:600;padding:4px 14px;border-radius:20px"></div>
+            <input type="file" id="xlsxFileInput" accept=".xlsx,.xls,.xlsm" style="display:none">
+          </label>
+
+          <!-- Sheet selector (shows after file load) -->
+          <div id="importSheetRow" style="display:none;margin-top:14px;display:none;align-items:center;gap:12px;flex-wrap:wrap">
+            <label style="font-size:.8rem;font-weight:600;color:var(--text-secondary);white-space:nowrap">Selecionar aba:</label>
+            <select id="importSheetSelect" style="
+              background:var(--surface-2);border:1px solid var(--border);border-radius:8px;
+              padding:6px 12px;font-size:.84rem;color:var(--text-primary);font-family:inherit;outline:none;cursor:pointer;
+            "></select>
+            <button class="export-action-btn blue-action" id="importLoadSheetBtn" style="padding:6px 16px;font-size:.8rem">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.8"/></svg>
+              Carregar aba
+            </button>
+          </div>
+
+          <!-- Preview table -->
+          <div id="importPreview" style="display:none;margin-top:16px">
+            <p style="font-size:.8rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">Pré-visualização dos dados detectados</p>
+            <div id="importPreviewTable" style="overflow-x:auto;border-radius:var(--radius-sm);border:1px solid var(--border);margin-bottom:14px"></div>
+            <div style="display:flex;gap:10px">
+              <button class="export-action-btn green-action" id="importConfirmBtn" style="flex:1">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                Confirmar e Atualizar Dashboard
+              </button>
+              <button class="export-action-btn" id="importCancelBtn" style="flex:0 0 auto">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Cancelar
+              </button>
+            </div>
+          </div>
+
+          <!-- Status message -->
+          <div id="importStatus" style="display:none;margin-top:12px" class="settings-info-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <span id="importStatusMsg"></span>
+          </div>
+
+          <div class="settings-info-box" style="margin-top:14px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            O arquivo é lido diretamente no seu navegador. Nenhum dado é enviado para servidores.
+          </div>
+        </div>
+
       </div>
     </div>`;
   },
@@ -979,6 +1163,263 @@ const SettingsPage = {
 
     /* Print */
     document.getElementById('sPrint')?.addEventListener('click', () => window.print());
+
+    /* ---- IMPORT: Drag & Drop ---- */
+    const dropZone = document.getElementById('importDropZone');
+    if (dropZone) {
+      dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.style.borderColor = '#1b7a3e'; dropZone.style.background = '#f0faf0'; });
+      dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = ''; dropZone.style.background = ''; });
+      dropZone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropZone.style.borderColor = ''; dropZone.style.background = '';
+        const file = e.dataTransfer.files[0];
+        if (file) ImportEngine.loadFile(file);
+      });
+    }
+
+    /* ---- IMPORT: File input ---- */
+    document.getElementById('xlsxFileInput')?.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (file) ImportEngine.loadFile(file);
+    });
+
+    /* ---- IMPORT: Sheet loader ---- */
+    document.getElementById('importLoadSheetBtn')?.addEventListener('click', () => {
+      const sel = document.getElementById('importSheetSelect');
+      if (sel) ImportEngine.loadSheet(sel.value);
+    });
+
+    /* ---- IMPORT: Confirm / Cancel ---- */
+    document.getElementById('importConfirmBtn')?.addEventListener('click', () => ImportEngine.confirm());
+    document.getElementById('importCancelBtn')?.addEventListener('click',  () => ImportEngine.cancel());
+  },
+};
+
+/* ============================================================
+   8b. IMPORT ENGINE – Excel (.xlsx) → live data update
+   ============================================================ */
+const ImportEngine = {
+  _wb:     null,   // workbook
+  _parsed: null,   // { headers, rows }
+
+  loadFile(file) {
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (!['xlsx','xls','xlsm'].includes(ext)) {
+      alert('Por favor, selecione um arquivo Excel (.xlsx ou .xls)'); return;
+    }
+
+    // Show filename badge
+    const badge = document.getElementById('importFileNameBadge');
+    if (badge) { badge.textContent = file.name; badge.style.display = 'block'; }
+
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const data = new Uint8Array(e.target.result);
+        this._wb = XLSX.read(data, { type: 'array' });
+        this._populateSheetSelector();
+      } catch(err) {
+        alert('Erro ao ler o arquivo: ' + err.message);
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  },
+
+  _populateSheetSelector() {
+    // Override the preview UI since we are processing the whole workbook automatically
+    this._processRawWorkbook();
+  },
+
+  _processRawWorkbook() {
+    if (!this._wb) return;
+    const sheetNames = this._wb.SheetNames;
+    
+    // Aggregation structure: data[month][professional] = { r: 0, nr: 0 }
+    const agg = {};
+    const monthsSet = new Set();
+    const profsSet = new Set();
+
+    sheetNames.forEach(name => {
+      // Regex to capture Month and Professional Name
+      // Ex: "JANEIRO-26 - Dra. Camila Queiro" -> match[1]="JANEIRO", match[2]="Camila"
+      const match = name.match(/^(JAN[A-Z]*|FEV[A-Z]*|MAR[A-Z]*|ABR[A-Z]*|MAI[A-Z]*|JUN[A-Z]*|JUL[A-Z]*|AGO[A-Z]*|SET[A-Z]*|OUT[A-Z]*|NOV[A-Z]*|DEZ[A-Z]*).*?-\s*Dra\.?\s*(\w+)/i);
+      if (!match) return;
+
+      let month = match[1].toUpperCase();
+      // Normalize month names
+      const mMap = { 'JAN':'Janeiro', 'FEV':'Fevereiro', 'MAR':'Março', 'ABR':'Abril', 'MAI':'Maio', 'JUN':'Junho', 'JUL':'Julho', 'AGO':'Agosto', 'SET':'Setembro', 'OUT':'Outubro', 'NOV':'Novembro', 'DEZ':'Dezembro' };
+      month = mMap[month.substring(0,3)] || month;
+      
+      const prof = match[2]; // e.g., "Camila" or "Priscila"
+      
+      monthsSet.add(month);
+      profsSet.add(prof);
+
+      if (!agg[month]) agg[month] = {};
+      if (!agg[month][prof]) agg[month][prof] = { r: 0, nr: 0 };
+
+      const ws = this._wb.Sheets[name];
+      const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+
+      // Extremely robust row parsing: just look for the words "Atendido" or "Cancelado" in any column of the row
+      data.forEach(row => {
+        const rowStr = row.join('|').toLowerCase();
+        // ensure we only count actual statuses (not header names)
+        if (rowStr.includes('atendido') && !rowStr.includes('unidade')) {
+          agg[month][prof].r++;
+        } else if (rowStr.includes('cancelado') && !rowStr.includes('unidade')) {
+          agg[month][prof].nr++;
+        }
+      });
+    });
+
+    // Check if we found raw data
+    if (monthsSet.size === 0) {
+      alert('Nenhuma aba válida encontrada. O nome das abas deve seguir o padrão "MÊS - Dra. Nome" (ex: "JANEIRO - Dra. Camila").');
+      this.cancel();
+      return;
+    }
+
+    this._parsedRaw = { agg, months: Array.from(monthsSet), profs: Array.from(profsSet) };
+    this._showRawPreview();
+  },
+
+  _showRawPreview() {
+    const preview  = document.getElementById('importPreview');
+    const tableDiv = document.getElementById('importPreviewTable');
+    if (!preview || !tableDiv) return;
+
+    const { agg, months, profs } = this._parsedRaw;
+
+    let th = `<th style="padding:8px 12px;font-size:.72rem;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);text-align:left">Mês</th>`;
+    th += `<th style="padding:8px 12px;font-size:.72rem;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);text-align:center">Total</th>`;
+    profs.forEach(p => {
+      th += `<th style="padding:8px 12px;font-size:.72rem;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border);text-align:center">Dra. ${p}</th>`;
+    });
+
+    let trs = '';
+    months.forEach((m, ri) => {
+      let totalR = 0, totalNR = 0;
+      let profCells = '';
+      profs.forEach(p => {
+        const data = agg[m][p] || { r: 0, nr: 0 };
+        totalR += data.r; totalNR += data.nr;
+        profCells += `<td style="padding:8px 12px;border-bottom:1px solid var(--border-soft);font-size:.83rem;text-align:center;color:var(--text-secondary)">${data.r} real. / ${data.nr} canc.</td>`;
+      });
+      
+      trs += `<tr style="background:${ri%2===0?'var(--surface)':'var(--surface-2)'}">
+        <td style="padding:8px 12px;border-bottom:1px solid var(--border-soft);font-size:.85rem;font-weight:600;color:var(--text-primary)">${m}</td>
+        <td style="padding:8px 12px;border-bottom:1px solid var(--border-soft);font-size:.85rem;text-align:center;color:var(--blue);font-weight:600">${totalR} / ${totalNR}</td>
+        ${profCells}
+      </tr>`;
+    });
+
+    tableDiv.innerHTML = `
+      <table style="width:100%;border-collapse:collapse;font-family:inherit">
+        <thead><tr>${th}</tr></thead>
+        <tbody>${trs}</tbody>
+      </table>`;
+    
+    // Change step 3 title
+    const pTitle = preview.querySelector('p');
+    if (pTitle) pTitle.textContent = `③ Passo 3 — Confirmar processamento automático (${months.length} meses)`;
+    
+    preview.style.display = 'block';
+    
+    const status = document.getElementById('importStatus');
+    if (status) status.style.display = 'none';
+  },
+
+  confirm() {
+    if (!this._parsedRaw) return;
+    const { agg, months, profs } = this._parsedRaw;
+
+    try {
+      // 1. REBUILD MONTHS ARRAY globally
+      MONTHS.length = 0;
+      months.forEach(m => MONTHS.push(m));
+      MONTHS_SHORT.length = 0;
+      months.forEach(m => MONTHS_SHORT.push(m.substring(0,3)));
+
+      // 2. REBUILD MONTHLY_DATA
+      MONTHLY_DATA.length = 0;
+      months.forEach(m => {
+        let r = 0, nr = 0;
+        profs.forEach(p => {
+          if (agg[m][p]) { r += agg[m][p].r; nr += agg[m][p].nr; }
+        });
+        MONTHLY_DATA.push({ month: m, realizados: r, naoRealizados: nr, total: r + nr });
+      });
+
+      // 3. REBUILD PROFESSIONALS dynamically
+      PROFESSIONALS.length = 0;
+      profs.forEach((p, index) => {
+        const role = p.toLowerCase() === 'camila' ? 'Fonoaudióloga' : (p.toLowerCase() === 'priscila' ? 'Psicóloga' : 'Especialista');
+        const color = p.toLowerCase() === 'camila' ? '1b7a3e' : (p.toLowerCase() === 'priscila' ? '2563eb' : '7c3aed');
+        const colorLight = p.toLowerCase() === 'camila' ? '#e8f5e9' : (p.toLowerCase() === 'priscila' ? '#dbeafe' : '#ede9fe');
+        
+        const profObj = {
+          id: p.toLowerCase(),
+          name: `Dra. ${p}`,
+          nameShort: `Dra. ${p}`,
+          role: role,
+          specialty: '',
+          color: color,
+          colorLight: colorLight,
+          initials: p.charAt(0),
+          avatar: `https://ui-avatars.com/api/?name=${p}&background=${color}&color=fff`,
+          realizados: 0,
+          naoRealizados: 0,
+          total: 0,
+          monthly: []
+        };
+        
+        months.forEach(m => {
+          const data = agg[m][p] || { r: 0, nr: 0 };
+          profObj.monthly.push({ realizados: data.r, naoRealizados: data.nr, total: data.r + data.nr });
+          profObj.realizados += data.r;
+          profObj.naoRealizados += data.nr;
+        });
+        profObj.total = profObj.realizados + profObj.naoRealizados;
+        
+        PROFESSIONALS.push(profObj);
+      });
+
+      // Show success
+      const preview = document.getElementById('importPreview');
+      const status  = document.getElementById('importStatus');
+      const msg     = document.getElementById('importStatusMsg');
+      if (preview) preview.style.display = 'none';
+      if (status)  { status.style.display = 'flex'; status.style.background = 'var(--green-light)'; status.style.color = 'var(--green)'; status.style.borderColor = 'rgba(56,182,200,.3)'; }
+      if (msg)     msg.textContent = `✓ Planilha importada com sucesso! ${rows.length} linhas processadas. Redirecionando para a Visão Geral...`;
+
+      // Reset
+      const fi = document.getElementById('xlsxFileInput');
+      if (fi) fi.value = '';
+      const badge = document.getElementById('importFileNameBadge');
+      if (badge) badge.style.display = 'none';
+      const sheetRow = document.getElementById('importSheetRow');
+      if (sheetRow) sheetRow.style.display = 'none';
+      this._wb = null; this._parsed = null;
+
+      // Navigate to overview
+      setTimeout(() => { if (window.Router) Router.navigate('overview'); }, 1400);
+
+    } catch(err) {
+      alert('Erro ao importar: ' + err.message);
+    }
+  },
+
+  cancel() {
+    this._wb = null; this._parsed = null;
+    const preview  = document.getElementById('importPreview');
+    const sheetRow = document.getElementById('importSheetRow');
+    const badge    = document.getElementById('importFileNameBadge');
+    const fi       = document.getElementById('xlsxFileInput');
+    if (preview)  preview.style.display  = 'none';
+    if (sheetRow) sheetRow.style.display = 'none';
+    if (badge)    badge.style.display    = 'none';
+    if (fi)       fi.value               = '';
   },
 };
 

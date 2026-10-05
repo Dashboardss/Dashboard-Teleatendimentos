@@ -11,23 +11,23 @@ const Router = (() => {
   const PAGE_META = {
     overview: {
       title:    'Panorama de Atendimentos',
-      subtitle: 'Consolidação dos atendimentos realizados e não realizados no 1º semestre de 2026. Material de apoio para reuniões de acompanhamento.',
-      period:   'Jan – Jun 2026',
+      subtitle: 'Consolidação dos atendimentos realizados e não realizados no período de Outubro/2025 a Outubro/2026.',
+      period:   'Out 2025 – Out 2026',
     },
     professionals: {
       title:    'Profissionais',
       subtitle: 'Estatísticas individuais, evolução mensal e comparativo de desempenho por profissional de saúde.',
-      period:   'Jan – Jun 2026',
+      period:   'Out 2025 – Out 2026',
     },
     reports: {
       title:    'Relatórios',
       subtitle: 'Análise detalhada com filtros interativos por período e profissional. Exporte os dados em CSV ou JSON.',
-      period:   'Jan – Jun 2026',
+      period:   'Out 2025 – Out 2026',
     },
     settings: {
       title:    'Configurações',
       subtitle: 'Personalize a aparência, ajuste filtros de período e exporte seus dados em diferentes formatos.',
-      period:   '2026',
+      period:   '2025 – 2026',
     },
   };
 
