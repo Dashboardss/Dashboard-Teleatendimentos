@@ -1,57 +1,15 @@
 <!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Painel de Atendimentos · Teleautônomo 2026</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-  <style>
-    :root{--ink:#10233f;--muted:#64748b;--paper:#f6f8fb;--card:#fff;--line:#e6ebf2;--blue:#1769e0;--teal:#00a896;--orange:#f59e0b;--red:#e05252;--purple:#7c5cff;--shadow:0 14px 40px rgba(16,35,63,.08)}
-    *{box-sizing:border-box} body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif} .wrap{max-width:1440px;margin:auto;padding:28px 26px 42px}
-    header{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:24px} h1{font-size:clamp(28px,4vw,48px);letter-spacing:-.04em;margin:0 0 7px;line-height:1.02}.eyebrow{color:var(--blue);font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}.subtitle{color:var(--muted);margin:0;max-width:760px}.source{font-size:12px;color:var(--muted);text-align:right;line-height:1.5}
-    .filters{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin:0 0 18px}.filter{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:700;color:var(--muted)} select{min-width:190px;border:1px solid var(--line);border-radius:10px;background:white;color:var(--ink);padding:10px 12px;font:inherit}
-    .grid{display:grid;gap:16px}.kpis{grid-template-columns:repeat(6,minmax(0,1fr));margin-bottom:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);padding:18px}.kpi{min-height:116px}.kpi .label{font-size:12px;color:var(--muted);font-weight:700}.kpi .value{font-size:31px;font-weight:850;letter-spacing:-.04em;margin-top:9px}.kpi .hint{font-size:11px;color:var(--muted);margin-top:4px}.blue{color:var(--blue)}.teal{color:var(--teal)}.orange{color:var(--orange)}.red{color:var(--red)}.purple{color:var(--purple)}
-    .charts{grid-template-columns:1.25fr 1fr}.charts2{grid-template-columns:1fr 1fr}.chart-card{min-height:355px}.card-title{display:flex;justify-content:space-between;gap:10px;align-items:baseline;margin-bottom:12px}.card-title h2{font-size:16px;margin:0}.card-title span{font-size:11px;color:var(--muted)}.canvas-wrap{height:285px;position:relative}
-    .insights{grid-template-columns:1fr 1fr;margin-top:16px}.insight h2{font-size:16px;margin:0 0 12px}.insight ul{padding-left:18px;margin:0;color:#334155;line-height:1.65;font-size:14px}.note{background:#eef5ff;border-color:#d8e7ff}.method{color:var(--muted);font-size:12px;line-height:1.6}.method strong{color:var(--ink)} footer{color:var(--muted);font-size:11px;margin-top:18px}
-    @media(max-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}.charts,.charts2,.insights{grid-template-columns:1fr}}@media(max-width:620px){.wrap{padding:20px 14px}.kpis{grid-template-columns:repeat(2,1fr)}header{display:block}.source{text-align:left;margin-top:12px}.kpi .value{font-size:25px}select{min-width:150px;width:100%}.filter{flex:1;min-width:145px}}
-  </style>
-</head>
-<body>
-<main class="wrap">
-  <header><div><div class="eyebrow">Galileu Saúde · Operação 2026</div><h1>Painel de atendimentos</h1><p class="subtitle">Visão consolidada das abas operacionais da escala Teleautônomo: realizados, não atendidos, cancelamentos, desistências e capacidade livre.</p></div><div class="source">Fonte: ESCALA TELEAUTÔNOMO 2026<br/>Dashboard agregado · sem dados pessoais</div></header>
-  <section class="filters" aria-label="Filtros"><label class="filter">Profissional<select id="professional"><option value="all">Todos os profissionais</option></select></label><label class="filter">Mês<select id="month"><option value="all">Todos os meses</option></select></label><label class="filter">Unidade<select id="unit"><option value="all">Todas as unidades</option></select></label></section>
-  <section class="grid kpis" id="kpis"></section>
-  <section class="grid charts">
-    <article class="card chart-card"><div class="card-title"><h2>Status dos atendimentos</h2><span>Registros filtrados</span></div><div class="canvas-wrap"><canvas id="statusChart"></canvas></div></article>
-    <article class="card chart-card"><div class="card-title"><h2>Atendimentos por profissional</h2><span>Realizados</span></div><div class="canvas-wrap"><canvas id="professionalChart"></canvas></div></article>
-  </section>
-  <section class="grid charts2" style="margin-top:16px">
-    <article class="card chart-card"><div class="card-title"><h2>Evolução mensal</h2><span>Realizado × perdas</span></div><div class="canvas-wrap"><canvas id="monthChart"></canvas></div></article>
-    <article class="card chart-card"><div class="card-title"><h2>Distribuição por horário</h2><span>Atendidos e não atendidos</span></div><div class="canvas-wrap"><canvas id="hourChart"></canvas></div></article>
-  </section>
-  <section class="grid insights"><article class="card insight note"><h2>Leituras principais</h2><ul id="insights"></ul></article><article class="card insight"><h2>Critérios da análise</h2><div class="method"><strong>Escopo:</strong> 20 abas operacionais com referência a 2026 e profissional identificável.<br/><strong>Realizado:</strong> status “Atendido”.<br/><strong>Perdas:</strong> “Não atendido”, “Cancelado” e “Desistência”.<br/><strong>Capacidade:</strong> “Vagas livres” aparece separadamente e não entra no denominador da taxa de atendimento.<br/><strong>Privacidade:</strong> o dashboard contém somente agregações por data, mês, profissional, unidade, horário e status.</div></article></section>
-  <footer id="footer"></footer>
-</main>
-<script>
-let DATA=null, charts={};
-const colors={'Atendido':'#00a896','Não atendido':'#e05252','Cancelado':'#f59e0b','Desistência':'#7c5cff','Vagas livres':'#94a3b8','Remanejado':'#1769e0','Sem status':'#cbd5e1'};
-const professional=document.querySelector('#professional'), month=document.querySelector('#month'), unit=document.querySelector('#unit');
-const fmt=n=>new Intl.NumberFormat('pt-BR').format(n); const pct=n=>`${n.toFixed(1).replace('.',',')}%`;
-function distinct(key){return [...new Set(DATA.records.map(r=>r[key]).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),'pt-BR',{numeric:true}));}
-function fillSelect(el, values){values.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;el.appendChild(o)})}
-function filtered(){return DATA.records.filter(r=>(professional.value==='all'||r.professional===professional.value)&&(month.value==='all'||r.month_label===month.value)&&(unit.value==='all'||r.unit===unit.value));}
-function aggregate(rows,key,allowed=null){const m=new Map();rows.forEach(r=>{if(allowed&&!allowed.includes(r.status))return;m.set(r[key],(m.get(r[key])||0)+1)});return [...m.entries()].sort((a,b)=>String(a[0]).localeCompare(String(b[0]),'pt-BR',{numeric:true}));}
-function destroy(id){if(charts[id])charts[id].destroy();}
- function chartDefaults(){return {responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{usePointStyle:true,boxWidth:8,font:{size:11}}}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{beginAtZero:true,grid:{color:'#edf1f6'},ticks:{precision:0,font:{size:10}}}}}}
-function draw(){const rows=filtered(); const attended=rows.filter(r=>r.status==='Atendido').length, noShow=rows.filter(r=>r.status==='Não atendido').length, loss=rows.filter(r=>['Cancelado','Desistência'].includes(r.status)).length, vacancies=rows.filter(r=>r.status==='Vagas livres').length, scheduled=rows.filter(r=>!['Vagas livres','Remanejado','Feriado'].includes(r.status)).length;
- document.querySelector('#kpis').innerHTML=[['Registros',rows.length,'blue','Agenda analisada'],['Atendidos',attended,'teal',`Taxa ${pct(scheduled?attended/scheduled*100:0)}`],['Não atendidos',noShow,'red',`Taxa ${pct(scheduled?noShow/scheduled*100:0)}`],['Cancelados + desistências',loss,'orange',`Taxa ${pct(scheduled?loss/scheduled*100:0)}`],['Vagas livres',vacancies,'purple','Capacidade não ocupada'],['Sem status',rows.filter(r=>r.status==='Sem status').length,'', 'Requer revisão cadastral']].map(x=>`<article class="card kpi"><div class="label">${x[0]}</div><div class="value ${x[2]}">${fmt(x[1])}</div><div class="hint">${x[3]}</div></article>`).join('');
- destroy('status'); charts.status=new Chart(document.querySelector('#statusChart'),{type:'doughnut',data:{labels:[...new Set(rows.map(r=>r.status))],datasets:[{data:[...new Set(rows.map(r=>r.status))].map(s=>rows.filter(r=>r.status===s).length),backgroundColor:[...new Set(rows.map(r=>r.status))].map(s=>colors[s]||'#64748b'),borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'66%',plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8,font:{size:10}}}}}});
- const pros=aggregate(rows,'professional','Atendido'.split()); destroy('professional'); charts.professional=new Chart(document.querySelector('#professionalChart'),{type:'bar',data:{labels:pros.map(x=>x[0].replace('Dra. ','')),datasets:[{label:'Atendidos',data:pros.map(x=>x[1]),backgroundColor:'#1769e0',borderRadius:6}]},options:{...chartDefaults(),plugins:{legend:{display:false}}}});
- const months=aggregate(rows,'month_label'); const mlabels=months.map(x=>x[0]); const by=(statuses)=>mlabels.map(m=>rows.filter(r=>r.month_label===m&&statuses.includes(r.status)).length); destroy('month'); charts.month=new Chart(document.querySelector('#monthChart'),{type:'line',data:{labels:mlabels,datasets:[{label:'Atendido',data:by(['Atendido']),borderColor:'#00a896',backgroundColor:'#00a896',tension:.35},{label:'Perdas',data:by(['Não atendido','Cancelado','Desistência']),borderColor:'#e05252',backgroundColor:'#e05252',tension:.35}]},options:chartDefaults()});
- const hours=aggregate(rows,'hour'); const hlabels=hours.map(x=>x[0]); destroy('hour'); charts.hour=new Chart(document.querySelector('#hourChart'),{type:'bar',data:{labels:hlabels,datasets:[{label:'Atendidos',data:hlabels.map(h=>rows.filter(r=>r.hour===h&&r.status==='Atendido').length),backgroundColor:'#00a896',borderRadius:4},{label:'Não atendidos',data:hlabels.map(h=>rows.filter(r=>r.hour===h&&r.status==='Não atendido').length),backgroundColor:'#e05252',borderRadius:4}]},options:{...chartDefaults(),scales:{...chartDefaults().scales,x:{...chartDefaults().scales.x,ticks:{...chartDefaults().scales.x.ticks,maxRotation:60,minRotation:45}}}}});
- const topUnit=aggregate(rows,'unit','Atendido').sort((a,b)=>b[1]-a[1])[0]; document.querySelector('#insights').innerHTML=`<li><strong>${fmt(attended)}</strong> atendimentos realizados no recorte atual, com taxa de atendimento de <strong>${pct(scheduled?attended/scheduled*100:0)}</strong>.</li><li>O maior volume de atendimentos está com <strong>${pros.sort((a,b)=>b[1]-a[1])[0]?.[0]||'—'}</strong>.</li><li>A unidade com mais atendimentos é <strong>${topUnit?.[0]||'—'}</strong> (${fmt(topUnit?.[1]||0)}).</li><li><strong>${fmt(rows.filter(r=>r.status==='Sem status').length)}</strong> registros sem status devem ser revisados antes de decisões operacionais.</li>`;
-}
-fetch('data.json').then(r=>r.json()).then(d=>{DATA=d;fillSelect(professional,distinct('professional'));fillSelect(month,distinct('month_label'));fillSelect(unit,distinct('unit'));[professional,month,unit].forEach(e=>e.addEventListener('change',draw));draw();document.querySelector('#footer').textContent=`Gerado em ${new Date(d.meta.generated_at).toLocaleString('pt-BR')} · ${d.meta.sheets_analyzed} abas analisadas · ${d.meta.privacy}`}).catch(e=>{document.querySelector('#kpis').innerHTML='<article class="card">Não foi possível carregar data.json. Abra o dashboard por um servidor local ou pelo GitHub Pages.</article>';console.error(e)});
-</script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <meta name="theme-color" content="#0f1e35" />
+    <title>Painel de atendimentos v2</title>
+    <script type="module" crossorigin src="/assets/index-CEOaN62T.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DMuJm5X2.css">
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="/api/platform/config.js"></script>
+  </body>
 </html>

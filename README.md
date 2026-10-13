@@ -1,23 +1,12 @@
-l# Dashboard Teleautônomo 2026
+# Painel de Atendimentos v2 — versão compacta
 
-Dashboard estático, responsivo e pronto para GitHub Pages, gerado a partir da planilha `ESCALATELEAUTÔNOMO2026(2).xlsx`.
+Esta pasta contém somente os arquivos compilados para uma publicação estática.
 
-## Abrir localmente
+## Como publicar no GitHub Pages
 
-```bash
-python3 -m http.server 8000
-```
+1. Entre no repositório do GitHub.
+2. Remova os arquivos antigos ou substitua os arquivos da raiz pelos arquivos desta pasta.
+3. Faça o commit na branch `main`.
+4. Em **Settings → Pages**, selecione **Deploy from a branch**, branch `main` e pasta `/root`.
 
-Depois acesse `http://localhost:8000`.
-
-## Conteúdo
-
-- `index.html`: painel interativo com filtros por profissional, mês e unidade.
-- `data.json`: dados agregados sem nome, CPF, telefone, cartão SUS, endereço ou data de nascimento.
-- `atendimentos_agregados.csv`: registros operacionais anonimizados.
-- `analise_2026.md`: resumo executivo e metodologia.
-- `gerar_dashboard.py`: rotina reprodutível de consolidação.
-
-## GitHub Pages
-
-Envie os arquivos para um repositório e habilite Pages em **Settings → Pages → Deploy from a branch → main/root**.
+A versão compacta mantém o dashboard, filtros, separação por médico, base de 2026 e exportações no navegador. A autenticação Manus e o armazenamento persistente de importações exigem a versão completa gerenciada com servidor.
