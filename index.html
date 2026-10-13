@@ -1,135 +1,57 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Panorama de Atendimentos | Dashboard</title>
-  <meta name="description"
-    content="Dashboard de Panorama de Atendimentos - Visualização de indicadores, gráficos e desempenho por profissional." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-    rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Painel de Atendimentos · Teleautônomo 2026</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <style>
+    :root{--ink:#10233f;--muted:#64748b;--paper:#f6f8fb;--card:#fff;--line:#e6ebf2;--blue:#1769e0;--teal:#00a896;--orange:#f59e0b;--red:#e05252;--purple:#7c5cff;--shadow:0 14px 40px rgba(16,35,63,.08)}
+    *{box-sizing:border-box} body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif} .wrap{max-width:1440px;margin:auto;padding:28px 26px 42px}
+    header{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:24px} h1{font-size:clamp(28px,4vw,48px);letter-spacing:-.04em;margin:0 0 7px;line-height:1.02}.eyebrow{color:var(--blue);font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}.subtitle{color:var(--muted);margin:0;max-width:760px}.source{font-size:12px;color:var(--muted);text-align:right;line-height:1.5}
+    .filters{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin:0 0 18px}.filter{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:700;color:var(--muted)} select{min-width:190px;border:1px solid var(--line);border-radius:10px;background:white;color:var(--ink);padding:10px 12px;font:inherit}
+    .grid{display:grid;gap:16px}.kpis{grid-template-columns:repeat(6,minmax(0,1fr));margin-bottom:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);padding:18px}.kpi{min-height:116px}.kpi .label{font-size:12px;color:var(--muted);font-weight:700}.kpi .value{font-size:31px;font-weight:850;letter-spacing:-.04em;margin-top:9px}.kpi .hint{font-size:11px;color:var(--muted);margin-top:4px}.blue{color:var(--blue)}.teal{color:var(--teal)}.orange{color:var(--orange)}.red{color:var(--red)}.purple{color:var(--purple)}
+    .charts{grid-template-columns:1.25fr 1fr}.charts2{grid-template-columns:1fr 1fr}.chart-card{min-height:355px}.card-title{display:flex;justify-content:space-between;gap:10px;align-items:baseline;margin-bottom:12px}.card-title h2{font-size:16px;margin:0}.card-title span{font-size:11px;color:var(--muted)}.canvas-wrap{height:285px;position:relative}
+    .insights{grid-template-columns:1fr 1fr;margin-top:16px}.insight h2{font-size:16px;margin:0 0 12px}.insight ul{padding-left:18px;margin:0;color:#334155;line-height:1.65;font-size:14px}.note{background:#eef5ff;border-color:#d8e7ff}.method{color:var(--muted);font-size:12px;line-height:1.6}.method strong{color:var(--ink)} footer{color:var(--muted);font-size:11px;margin-top:18px}
+    @media(max-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}.charts,.charts2,.insights{grid-template-columns:1fr}}@media(max-width:620px){.wrap{padding:20px 14px}.kpis{grid-template-columns:repeat(2,1fr)}header{display:block}.source{text-align:left;margin-top:12px}.kpi .value{font-size:25px}select{min-width:150px;width:100%}.filter{flex:1;min-width:145px}}
+  </style>
 </head>
-
 <body>
-  <div class="dashboard-wrapper">
-
-    <!-- ===== SIDEBAR ===== -->
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-logo">
-        <img src="logo.png" alt="Galileu Saúde 360" style="width: 100%; max-width: 180px; object-fit: contain;">
-      </div>
-
-      <nav class="sidebar-nav" role="navigation" aria-label="Menu principal">
-        <a href="#overview" class="nav-item" data-route="overview" id="nav-overview" aria-label="Visão Geral">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="7" height="7" rx="1" />
-            <rect x="14" y="3" width="7" height="7" rx="1" />
-            <rect x="14" y="14" width="7" height="7" rx="1" />
-            <rect x="3" y="14" width="7" height="7" rx="1" />
-          </svg>
-          <span>Visão Geral</span>
-        </a>
-        <a href="#professionals" class="nav-item" data-route="professionals" id="nav-professionals"
-          aria-label="Profissionais">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M23 21v-2a4 4 0 00-3-3.87" />
-            <path d="M16 3.13a4 4 0 010 7.75" />
-          </svg>
-          <span>Profissionais</span>
-        </a>
-        <a href="#reports" class="nav-item" data-route="reports" id="nav-reports" aria-label="Relatórios">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-            <polyline points="14 2 14 8 20 8" />
-            <line x1="16" y1="13" x2="8" y2="13" />
-            <line x1="16" y1="17" x2="8" y2="17" />
-            <polyline points="10 9 9 9 8 9" />
-          </svg>
-          <span>Relatórios</span>
-        </a>
-        <a href="#settings" class="nav-item" data-route="settings" id="nav-settings" aria-label="Configurações">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="3" />
-            <path
-              d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M2 12h2M20 12h2M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41" />
-          </svg>
-          <span>Configurações</span>
-        </a>
-      </nav>
-
-      <div class="sidebar-footer">
-        <div class="sidebar-year-badge">2025–2026</div>
-        <span>Período Completo</span>
-      </div>
-    </aside>
-
-    <!-- ===== MAIN CONTENT ===== -->
-    <main class="main-content" id="main-content">
-
-      <!-- Fixed Header -->
-      <header class="top-header" id="top-header">
-        <div class="header-left">
-          <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
-            <span></span><span></span><span></span>
-          </button>
-          <div class="header-titles">
-            <h1 class="page-title" id="header-title">Panorama de Atendimentos</h1>
-            <p class="page-subtitle" id="header-subtitle">Consolidação dos atendimentos realizados e não realizados no período de Outubro/2025 a Outubro/2026.</p>
-          </div>
-        </div>
-        <div class="header-right">
-          <div class="header-period" style="display:flex; align-items:center; gap:8px;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
-              <rect x="3" y="4" width="18" height="18" rx="2" />
-              <line x1="16" y1="2" x2="16" y2="6" />
-              <line x1="8" y1="2" x2="8" y2="6" />
-              <line x1="3" y1="10" x2="21" y2="10" />
-            </svg>
-            <input type="date" id="globalStartMonth" class="date-select" value="2025-10-01" min="2025-10-01"
-              max="2026-10-31">
-            <span style="font-size:0.8rem; color:var(--text-muted);">até</span>
-            <input type="date" id="globalEndMonth" class="date-select" value="2026-10-31" min="2025-10-01"
-              max="2026-10-31">
-          </div>
-          <button class="theme-toggle-btn" id="headerThemeToggle" aria-label="Alternar modo escuro"
-            title="Alternar modo escuro">
-            <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="5" />
-              <line x1="12" y1="1" x2="12" y2="3" />
-              <line x1="12" y1="21" x2="12" y2="23" />
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-              <line x1="1" y1="12" x2="3" y2="12" />
-              <line x1="21" y1="12" x2="23" y2="12" />
-              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-            </svg>
-            <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-            </svg>
-        </div>
-      </header>
-
-      <!-- Dynamic Page Content -->
-      <div id="page-content" class="page-content" role="main"></div>
-
-    </main>
-  </div>
-
-  <!-- Sidebar overlay (mobile) -->
-  <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-  <script src="data.js"></script>
-  <script src="router.js"></script>
-  <script src="app.js"></script>
+<main class="wrap">
+  <header><div><div class="eyebrow">Galileu Saúde · Operação 2026</div><h1>Painel de atendimentos</h1><p class="subtitle">Visão consolidada das abas operacionais da escala Teleautônomo: realizados, não atendidos, cancelamentos, desistências e capacidade livre.</p></div><div class="source">Fonte: ESCALA TELEAUTÔNOMO 2026<br/>Dashboard agregado · sem dados pessoais</div></header>
+  <section class="filters" aria-label="Filtros"><label class="filter">Profissional<select id="professional"><option value="all">Todos os profissionais</option></select></label><label class="filter">Mês<select id="month"><option value="all">Todos os meses</option></select></label><label class="filter">Unidade<select id="unit"><option value="all">Todas as unidades</option></select></label></section>
+  <section class="grid kpis" id="kpis"></section>
+  <section class="grid charts">
+    <article class="card chart-card"><div class="card-title"><h2>Status dos atendimentos</h2><span>Registros filtrados</span></div><div class="canvas-wrap"><canvas id="statusChart"></canvas></div></article>
+    <article class="card chart-card"><div class="card-title"><h2>Atendimentos por profissional</h2><span>Realizados</span></div><div class="canvas-wrap"><canvas id="professionalChart"></canvas></div></article>
+  </section>
+  <section class="grid charts2" style="margin-top:16px">
+    <article class="card chart-card"><div class="card-title"><h2>Evolução mensal</h2><span>Realizado × perdas</span></div><div class="canvas-wrap"><canvas id="monthChart"></canvas></div></article>
+    <article class="card chart-card"><div class="card-title"><h2>Distribuição por horário</h2><span>Atendidos e não atendidos</span></div><div class="canvas-wrap"><canvas id="hourChart"></canvas></div></article>
+  </section>
+  <section class="grid insights"><article class="card insight note"><h2>Leituras principais</h2><ul id="insights"></ul></article><article class="card insight"><h2>Critérios da análise</h2><div class="method"><strong>Escopo:</strong> 20 abas operacionais com referência a 2026 e profissional identificável.<br/><strong>Realizado:</strong> status “Atendido”.<br/><strong>Perdas:</strong> “Não atendido”, “Cancelado” e “Desistência”.<br/><strong>Capacidade:</strong> “Vagas livres” aparece separadamente e não entra no denominador da taxa de atendimento.<br/><strong>Privacidade:</strong> o dashboard contém somente agregações por data, mês, profissional, unidade, horário e status.</div></article></section>
+  <footer id="footer"></footer>
+</main>
+<script>
+let DATA=null, charts={};
+const colors={'Atendido':'#00a896','Não atendido':'#e05252','Cancelado':'#f59e0b','Desistência':'#7c5cff','Vagas livres':'#94a3b8','Remanejado':'#1769e0','Sem status':'#cbd5e1'};
+const professional=document.querySelector('#professional'), month=document.querySelector('#month'), unit=document.querySelector('#unit');
+const fmt=n=>new Intl.NumberFormat('pt-BR').format(n); const pct=n=>`${n.toFixed(1).replace('.',',')}%`;
+function distinct(key){return [...new Set(DATA.records.map(r=>r[key]).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),'pt-BR',{numeric:true}));}
+function fillSelect(el, values){values.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;el.appendChild(o)})}
+function filtered(){return DATA.records.filter(r=>(professional.value==='all'||r.professional===professional.value)&&(month.value==='all'||r.month_label===month.value)&&(unit.value==='all'||r.unit===unit.value));}
+function aggregate(rows,key,allowed=null){const m=new Map();rows.forEach(r=>{if(allowed&&!allowed.includes(r.status))return;m.set(r[key],(m.get(r[key])||0)+1)});return [...m.entries()].sort((a,b)=>String(a[0]).localeCompare(String(b[0]),'pt-BR',{numeric:true}));}
+function destroy(id){if(charts[id])charts[id].destroy();}
+ function chartDefaults(){return {responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{usePointStyle:true,boxWidth:8,font:{size:11}}}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{beginAtZero:true,grid:{color:'#edf1f6'},ticks:{precision:0,font:{size:10}}}}}}
+function draw(){const rows=filtered(); const attended=rows.filter(r=>r.status==='Atendido').length, noShow=rows.filter(r=>r.status==='Não atendido').length, loss=rows.filter(r=>['Cancelado','Desistência'].includes(r.status)).length, vacancies=rows.filter(r=>r.status==='Vagas livres').length, scheduled=rows.filter(r=>!['Vagas livres','Remanejado','Feriado'].includes(r.status)).length;
+ document.querySelector('#kpis').innerHTML=[['Registros',rows.length,'blue','Agenda analisada'],['Atendidos',attended,'teal',`Taxa ${pct(scheduled?attended/scheduled*100:0)}`],['Não atendidos',noShow,'red',`Taxa ${pct(scheduled?noShow/scheduled*100:0)}`],['Cancelados + desistências',loss,'orange',`Taxa ${pct(scheduled?loss/scheduled*100:0)}`],['Vagas livres',vacancies,'purple','Capacidade não ocupada'],['Sem status',rows.filter(r=>r.status==='Sem status').length,'', 'Requer revisão cadastral']].map(x=>`<article class="card kpi"><div class="label">${x[0]}</div><div class="value ${x[2]}">${fmt(x[1])}</div><div class="hint">${x[3]}</div></article>`).join('');
+ destroy('status'); charts.status=new Chart(document.querySelector('#statusChart'),{type:'doughnut',data:{labels:[...new Set(rows.map(r=>r.status))],datasets:[{data:[...new Set(rows.map(r=>r.status))].map(s=>rows.filter(r=>r.status===s).length),backgroundColor:[...new Set(rows.map(r=>r.status))].map(s=>colors[s]||'#64748b'),borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'66%',plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8,font:{size:10}}}}}});
+ const pros=aggregate(rows,'professional','Atendido'.split()); destroy('professional'); charts.professional=new Chart(document.querySelector('#professionalChart'),{type:'bar',data:{labels:pros.map(x=>x[0].replace('Dra. ','')),datasets:[{label:'Atendidos',data:pros.map(x=>x[1]),backgroundColor:'#1769e0',borderRadius:6}]},options:{...chartDefaults(),plugins:{legend:{display:false}}}});
+ const months=aggregate(rows,'month_label'); const mlabels=months.map(x=>x[0]); const by=(statuses)=>mlabels.map(m=>rows.filter(r=>r.month_label===m&&statuses.includes(r.status)).length); destroy('month'); charts.month=new Chart(document.querySelector('#monthChart'),{type:'line',data:{labels:mlabels,datasets:[{label:'Atendido',data:by(['Atendido']),borderColor:'#00a896',backgroundColor:'#00a896',tension:.35},{label:'Perdas',data:by(['Não atendido','Cancelado','Desistência']),borderColor:'#e05252',backgroundColor:'#e05252',tension:.35}]},options:chartDefaults()});
+ const hours=aggregate(rows,'hour'); const hlabels=hours.map(x=>x[0]); destroy('hour'); charts.hour=new Chart(document.querySelector('#hourChart'),{type:'bar',data:{labels:hlabels,datasets:[{label:'Atendidos',data:hlabels.map(h=>rows.filter(r=>r.hour===h&&r.status==='Atendido').length),backgroundColor:'#00a896',borderRadius:4},{label:'Não atendidos',data:hlabels.map(h=>rows.filter(r=>r.hour===h&&r.status==='Não atendido').length),backgroundColor:'#e05252',borderRadius:4}]},options:{...chartDefaults(),scales:{...chartDefaults().scales,x:{...chartDefaults().scales.x,ticks:{...chartDefaults().scales.x.ticks,maxRotation:60,minRotation:45}}}}});
+ const topUnit=aggregate(rows,'unit','Atendido').sort((a,b)=>b[1]-a[1])[0]; document.querySelector('#insights').innerHTML=`<li><strong>${fmt(attended)}</strong> atendimentos realizados no recorte atual, com taxa de atendimento de <strong>${pct(scheduled?attended/scheduled*100:0)}</strong>.</li><li>O maior volume de atendimentos está com <strong>${pros.sort((a,b)=>b[1]-a[1])[0]?.[0]||'—'}</strong>.</li><li>A unidade com mais atendimentos é <strong>${topUnit?.[0]||'—'}</strong> (${fmt(topUnit?.[1]||0)}).</li><li><strong>${fmt(rows.filter(r=>r.status==='Sem status').length)}</strong> registros sem status devem ser revisados antes de decisões operacionais.</li>`;
+}
+fetch('data.json').then(r=>r.json()).then(d=>{DATA=d;fillSelect(professional,distinct('professional'));fillSelect(month,distinct('month_label'));fillSelect(unit,distinct('unit'));[professional,month,unit].forEach(e=>e.addEventListener('change',draw));draw();document.querySelector('#footer').textContent=`Gerado em ${new Date(d.meta.generated_at).toLocaleString('pt-BR')} · ${d.meta.sheets_analyzed} abas analisadas · ${d.meta.privacy}`}).catch(e=>{document.querySelector('#kpis').innerHTML='<article class="card">Não foi possível carregar data.json. Abra o dashboard por um servidor local ou pelo GitHub Pages.</article>';console.error(e)});
+</script>
 </body>
-
 </html>
