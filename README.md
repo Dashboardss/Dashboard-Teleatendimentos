@@ -1,4 +1,4 @@
-# Dashboard Teleautônomo 2026
+l# Dashboard Teleautônomo 2026
 
 Dashboard estático, responsivo e pronto para GitHub Pages, gerado a partir da planilha `ESCALATELEAUTÔNOMO2026(2).xlsx`.
 
