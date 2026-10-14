@@ -1,14 +1,5 @@
-# Painel de Atendimentos — versão administrativa
+# Painel de Atendimentos
 
-Esta branch contém a versão completa do sistema, com servidor e banco de dados:
+Dashboard público de atendimentos de 2026 publicado no GitHub Pages.
 
-- Login próprio com usuário e senha;
-- Primeiro cadastro do administrador;
-- Criação, bloqueio e reativação de acessos;
-- Importação de Excel;
-- Relatórios;
-- Profissionais separados: Camila, Priscila e Viridiana.
-
-A branch `main` continua sendo a versão pública estática do GitHub Pages.
-
-A versão administrativa precisa ser executada em uma hospedagem com Node.js, servidor e banco de dados. Ela não funciona como GitHub Pages estático.
+A versão administrativa com login e banco está na branch `admin-v2` e deve ser executada em uma hospedagem com servidor Node.js.
