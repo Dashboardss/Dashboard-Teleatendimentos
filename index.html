@@ -5,10 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
     <meta name="theme-color" content="#0f1e35" />
     <title>Painel de atendimentos v2</title>
+    <style>
+      #simple-login{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:linear-gradient(135deg,#0f1e35,#183b56);font-family:Arial,sans-serif}
+      #simple-login[hidden]{display:none}.login-box{width:min(92vw,380px);box-sizing:border-box;background:#fff;border-radius:20px;padding:34px;box-shadow:0 24px 70px #07142388;text-align:center}.login-mark{width:48px;height:48px;margin:0 auto 14px;border-radius:14px;background:#3b82f6;color:#fff;display:grid;place-items:center;font-weight:800;font-size:22px}.login-box h1{margin:0;color:#10213a;font-size:24px}.login-box p{color:#66758a;font-size:14px;margin:9px 0 22px}.login-box form{display:grid;gap:11px}.login-box input{border:1px solid #d7e0eb;border-radius:10px;padding:12px;font-size:15px;outline:none}.login-box input:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f622}.password-wrap{position:relative}.password-wrap input{width:100%;box-sizing:border-box;padding-right:44px}.password-toggle{position:absolute;right:7px;top:50%;transform:translateY(-50%);border:0!important;background:transparent!important;color:#64748b!important;padding:7px!important;font-size:18px!important;line-height:1!important;cursor:pointer}.login-box button.login-submit{border:0;border-radius:10px;padding:12px;background:#2563eb;color:#fff;font-weight:700;font-size:15px;cursor:pointer}.login-box button.login-submit:hover{background:#1d4ed8}.login-error{min-height:18px;color:#dc3545;font-size:13px;margin-top:12px}
+    </style>
+    <script>
+      (function(){
+        var key='painel-atendimentos-login';
+        function show(){var e=document.getElementById('simple-login');if(e)e.hidden=false;}
+        function ready(){
+          if(sessionStorage.getItem(key)==='ok'){var e=document.getElementById('simple-login');if(e)e.hidden=true;return;}
+          show();
+          var f=document.getElementById('simple-login-form');
+          var t=document.getElementById('password-toggle');if(t)t.addEventListener('click',function(){var p=document.getElementById('login-pass');var visible=p.type==='text';p.type=visible?'password':'text';t.textContent=visible?'◉':'◌';t.setAttribute('aria-label',visible?'Mostrar senha':'Ocultar senha');});
+          if(f)f.addEventListener('submit',function(ev){ev.preventDefault();var u=document.getElementById('login-user').value.trim();var p=document.getElementById('login-pass').value;var er=document.getElementById('login-error');if(u==='admin'&&p==='123456'){sessionStorage.setItem(key,'ok');document.getElementById('simple-login').hidden=true;}else{er.textContent='Usuário ou senha inválidos.';}});
+        }
+        document.addEventListener('DOMContentLoaded',ready);
+      })();
+    </script>
     <script type="module" crossorigin src="./app.js"></script>
     <link rel="stylesheet" crossorigin href="./styles.css">
   </head>
   <body>
+    <div id="simple-login">
+      <div class="login-box">
+        <div class="login-mark">A</div>
+        <h1>Acesso restrito</h1>
+        <p>Informe seu usuário e senha para acessar o painel.</p>
+        <form id="simple-login-form" autocomplete="off">
+          <input id="login-user" type="text" placeholder="Usuário" autocomplete="username" required>
+          <div class="password-wrap"><input id="login-pass" type="password" placeholder="Senha" autocomplete="current-password" required><button id="password-toggle" class="password-toggle" type="button" aria-label="Mostrar senha">◉</button></div>
+          <button class="login-submit" type="submit">Entrar</button>
+        </form>
+        <div id="login-error" class="login-error" aria-live="polite"></div>
+      </div>
+    </div>
     <div id="root"></div>
   </body>
 </html>
