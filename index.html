@@ -18,7 +18,7 @@
           show();
           var f=document.getElementById('simple-login-form');
           var t=document.getElementById('password-toggle');if(t)t.addEventListener('click',function(){var p=document.getElementById('login-pass');var visible=p.type==='text';p.type=visible?'password':'text';t.textContent=visible?'◉':'◌';t.setAttribute('aria-label',visible?'Mostrar senha':'Ocultar senha');});
-          if(f)f.addEventListener('submit',function(ev){ev.preventDefault();var u=document.getElementById('login-user').value.trim();var p=document.getElementById('login-pass').value;var er=document.getElementById('login-error');if(u==='admin'&&p==='123456'){sessionStorage.setItem(key,'ok');document.getElementById('simple-login').hidden=true;}else{er.textContent='Usuário ou senha inválidos.';}});
+          if(f)f.addEventListener('submit',function(ev){ev.preventDefault();var u=document.getElementById('login-user').value.trim();var p=document.getElementById('login-pass').value;var er=document.getElementById('login-error');if(u==='admin'&&p==='tele2026'){sessionStorage.setItem(key,'ok');document.getElementById('simple-login').hidden=true;}else{er.textContent='Usuário ou senha inválidos.';}});
         }
         document.addEventListener('DOMContentLoaded',ready);
       })();
